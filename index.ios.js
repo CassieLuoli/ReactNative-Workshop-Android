@@ -9,14 +9,10 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
+  ListView,
   View,
   Image
 } from 'react-native';
-
-var MOCKED_MOVIES_DATA = [
-  {title: '标题', year: '2015', posters: {thumbnail: 'http://cdn1.w3cplus.com/cdn/farfuture/vASELk4rEEi3sIfp7M39ptVoCX2BfOdSQhYKvXhh5lU/mtime:1341237505/sites/default/files/box-shadow3.png'}},
-  {title: '标题', year: '2015', posters: {thumbnail: 'http://cdn1.w3cplus.com/cdn/farfuture/vASELk4rEEi3sIfp7M39ptVoCX2BfOdSQhYKvXhh5lU/mtime:1341237505/sites/default/files/box-shadow3.png'}},
-];
 
 var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
 
@@ -27,10 +23,15 @@ class SampleAppMovies extends Component {
       super(props);   //这一句不能省略，照抄即可
       this.state = {
         movies: null,  //这里放你自己定义的state变量及初始值
+        dataSource: new ListView.DataSource({
+          rowHasChanged: (row1, row2) => row1 !== row2,
+        }),
+        loaded: false,
       };
       // 在ES6中，如果在自定义的函数里使用了this关键字，则需要对其进行“绑定”操作，否则this的指向不对
       // 像下面这行代码一样，在constructor中使用bind是其中一种做法（还有一些其他做法，如使用箭头函数等）
       this.fetchData = this.fetchData.bind(this);
+
     }
 
     componentDidMount() {
@@ -43,7 +44,9 @@ class SampleAppMovies extends Component {
           .then((responseData) => {
             // 注意，这里使用了this关键字，为了保证this在调用时仍然指向当前组件，我们需要对其进行“绑定”操作
             this.setState({
-              movies: responseData.movies,
+              // movies: responseData.movies,
+              dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+              loaded: true,
             });
           })
           .done();
@@ -62,10 +65,10 @@ class SampleAppMovies extends Component {
       renderMovie(movie) {
         return (
           <View>
-        <View style={styles.container}>
+        <View style={[styles.container, styles.shadow]}>
           <Image
-            source={{uri: movie.posters.thumbnail}}
-            style={styles.thumbnail}
+          style={styles.thumbnail}
+            source={{ uri: movie.posters.thumbnail}}
           />
           <View style={styles.rightcontainer}>
             <Text style={styles.title}>{movie.title}</Text>
@@ -78,12 +81,18 @@ class SampleAppMovies extends Component {
       }
   render() {
 
-    if(!this.state.movies){
+    if(!this.state.loaded) {
       return this.renderLoadingView();
     }
 
-    var movie = this.state.movies[0];
-    return this.renderMovie(movie);
+    return (
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this.renderMovie}
+        style={styles.listView}
+      />
+    );
+
   }
 }
 
@@ -108,20 +117,33 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   title: {
-    flex:1,
     color: '#333333',
+    fontSize:18,
+    fontWeight:'bold',
     alignItems:'center',
   },
   year: {
-    flex:1,
     color: '#666666',
     alignItems:'center',
   },
   rightcontainer:{
     flex:1,
-    backgroundColor:'#ffffff',
     flexDirection:'column',
-  }
+  },
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF',
+  },
+  shadow: {
+   shadowColor: 'black',
+   shadowOpacity: 0.3,
+   shadowOffset: {
+     width: 0,
+     height: 1
+   },
+   shadowRadius: 4
+ },
+
 });
 
 AppRegistry.registerComponent('SampleAppMovies', () => SampleAppMovies);
