@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 
 var { NativeModules } = require('react-native');
+var { DeviceEventEmitter } = require('react-native');
 
 class SampleAppMovies extends Component {
   showToast() {
@@ -28,6 +29,16 @@ class SampleAppMovies extends Component {
     }, (x, y, width, height) => {
       Alert.alert("callbackFromNative toast poit: "+x + '坐标,' + y + '坐标,' + width + '宽,' + height+'高');
     })
+  }
+
+  triggerEventFromNative(){
+    NativeModules.ToastAndroid.triggerDelayedEvent();
+  }
+
+  componentWillMount() {
+    DeviceEventEmitter.addListener('DelayedEvent', function(e: Event) {
+      Alert.alert("Event Received!!!");
+    });
   }
 
   render() {
@@ -44,6 +55,9 @@ class SampleAppMovies extends Component {
         </Text>
         <Text style={styles.instructions} onPress={this.callbackFromNative}>
           callback From Native
+        </Text>
+        <Text style={styles.instructions} onPress={this.triggerEventFromNative}>
+          Trigger Event From Native
         </Text>
       </View>
     );
