@@ -11,14 +11,23 @@ import {
   StyleSheet,
   Text,
   View,
-  ToastAndroid
+  ToastAndroid,
+  Alert,
 } from 'react-native';
 
 var { NativeModules } = require('react-native');
 
 class SampleAppMovies extends Component {
-  onClicked() {
-    NativeModules.ToastAndroid.show("Awesome", ToastAndroid.SHORT);
+  showToast() {
+    NativeModules.ToastAndroid.show("Awesome!!!We call Native from JS", ToastAndroid.SHORT);
+  }
+
+  callbackFromNative() {
+    NativeModules.ToastAndroid.measureLayout((msg)=>{
+        console.log("callbackFromNative error");
+    }, (x, y, width, height) => {
+      Alert.alert("callbackFromNative toast poit: "+x + '坐标,' + y + '坐标,' + width + '宽,' + height+'高');
+    })
   }
 
   render() {
@@ -30,10 +39,12 @@ class SampleAppMovies extends Component {
         <Text style={styles.instructions}>
           To get started, edit index.android.js
         </Text>
-        <Text style={styles.instructions} onPress={this.onClicked}>
-          click for toast
+        <Text style={styles.instructions} onPress={this.showToast}>
+          call natvie module from JS
         </Text>
-
+        <Text style={styles.instructions} onPress={this.callbackFromNative}>
+          callback From Native
+        </Text>
       </View>
     );
   }
