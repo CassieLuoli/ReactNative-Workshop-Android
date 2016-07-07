@@ -5,14 +5,22 @@
  */
 
 import React, { Component } from 'react';
+
 import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  ToastAndroid
 } from 'react-native';
 
+var { NativeModules } = require('react-native');
+
 class SampleAppMovies extends Component {
+  onClicked() {
+    NativeModules.ToastAndroid.show("Awesome", ToastAndroid.SHORT);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -22,12 +30,15 @@ class SampleAppMovies extends Component {
         <Text style={styles.instructions}>
           To get started, edit index.android.js
         </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
+        <Text style={styles.instructions} onPress={this.onClicked}>
+          click for toast
         </Text>
+
       </View>
     );
   }
+
+
 }
 
 const styles = StyleSheet.create({
