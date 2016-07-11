@@ -27,6 +27,8 @@ public class AndroidPackageImp implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Collections.emptyList();
+        final ArrayList<ViewManager> nativeModules = new ArrayList<>();
+        nativeModules.add(new RTCEditText());
+        return nativeModules;
     }
 }

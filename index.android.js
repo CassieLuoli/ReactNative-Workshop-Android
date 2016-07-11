@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import EditText from './js/EditText.js';
 
 import {
   AppRegistry,
@@ -56,9 +57,11 @@ class SampleAppMovies extends Component {
         <Text style={styles.instructions} onPress={this.callbackFromNative}>
           callback From Native
         </Text>
+        <EditText hint="hello" style={styles.edittext}/>
         <Text style={styles.instructions} onPress={this.triggerEventFromNative}>
           Trigger Event From Native
         </Text>
+
       </View>
     );
   }
@@ -67,6 +70,10 @@ class SampleAppMovies extends Component {
 }
 
 const styles = StyleSheet.create({
+  edittext:{
+    width:200,
+    height:80,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
